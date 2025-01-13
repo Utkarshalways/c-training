@@ -1,0 +1,127 @@
+// Online C compiler to run C program online
+#include <stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<ctype.h>
+
+
+
+void printMatrix(int arr[][100],int n,int m){
+    
+    
+        for(int i = 0;i<n;i++){
+            
+            for(int j =0;j<m;j++){
+                
+                printf("%d ",arr[i][j]);
+            }
+            
+            printf("\n");
+        }
+    
+}
+
+int main() {
+    
+    
+    // int m = 3;
+    // int n = 3;
+    // int arr[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+    
+    
+    char str[100];
+    printf("Enter the String in the matrix:-- ");
+    fgets(str,sizeof(str),stdin);
+    
+    printf("%s\n",str);
+    
+    
+    
+    int row = 0;
+    int cols = 0;
+    
+    int arr[100][100];
+    
+    for(int i = 1;i<strlen(str);i++){
+        
+        
+            char ch = str[i];
+            
+            if(ch == ','){
+                row++;
+                cols=-1;
+            }
+            else if(str[i] >= '0' && str[i] <= '9' || str[i] == '-' && isdigit(str[i])){
+
+                int num = 0;
+
+                
+                
+                while( str[i] >= '0' && str[i] <= '9'){
+                    
+                    num = num * 10 + (str[i++] - '0');
+                    
+                }
+                 
+                printf("Rows:-- %d , Cols:-- %d and the Num:- %d\n",row,cols,num);
+                arr[row][cols++] = num;
+            }
+        
+        
+    }
+    
+    
+    
+    
+    printf("\n This is different thing totally below that:-- \n\n");
+    
+    printMatrix(arr,row+1,cols+1);
+    
+    
+    printf("This is for the sprial Printing:- ");
+    
+    int left = 0;
+    int right = cols;
+    int top = 0;
+    int bottom = row;
+    
+    printf("Rows:- %d cols:- %d",row,cols );
+    
+    printf("[");
+    while(top <= bottom && left <= right){
+        
+        
+        for(int i = left;i <= right;i++){
+            
+            printf("%d ",arr[top][i]);
+            
+        }
+        top++;
+        
+        for(int i = top; i <= bottom;i++){
+            
+            printf("%d ",arr[i][right]);
+        }
+        right--;
+        
+        for(int i = right;i >= left;i--){
+            
+            printf("%d ",arr[bottom][i]);
+            
+        }
+        bottom--;
+        
+        for(int i = bottom;i >= top ;i--){
+            
+            printf("%d",arr[i][left]);
+        }
+        
+        left++;
+        
+        
+    }
+    
+    printf("]");
+
+    return 0;
+}
