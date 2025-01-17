@@ -1,0 +1,1 @@
+    printMat(matSize,mat);
