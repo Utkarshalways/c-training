@@ -38,7 +38,7 @@ int print(Node* head){
     int count = 0;
     while(temp != NULL){
     // printf("error in print");
-        printf("%d - %s type :- %d\n",temp->id,temp->name,temp->pr);
+        printf("%d - %s (%d)\n",temp->id,temp->name,temp->pr);
         count++;
         temp = temp->next;
     }
@@ -71,7 +71,6 @@ Node* pop(Node* head){
     if(head == NULL){
         return NULL;
     }
-
     Node* temp = head;
     head = head->next;
     print(temp);
@@ -89,6 +88,10 @@ int main(){
     print(head);
     head = pop(head);
     print(head);
+
+    scanf("%d, %[^\,], \%[^\n]")
+
+
 
 
 }
