@@ -1,97 +1,172 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
-typedef enum Priority
+typedef enum priority
 {
-
-    GENERAL = 1,
+    VIP,
     SENIOR_CITIZEN,
-    VIP
+    GENERAL
+} priority;
 
-} Pr;
-
-typedef struct Node
+struct passenger
 {
     int id;
-    enum Priority pr;
+    priority priority;
     char *name;
-    struct Node *next;
-    
-} Node;
+};
 
-Node *createNode(int id, enum Priority pr, char *name)
+char *priorityArray[3];
+
+void initializeArray()
 {
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    newNode->id = id;
-    newNode->pr = pr;
-    newNode->name = (char *)malloc(sizeof(char) * strlen(name));
-    strcpy(newNode->name, name);
-    newNode->next = NULL;
-    return newNode;
+    priorityArray[0] = "VIP";
+    priorityArray[1] = "SENIOR_CITIZEN";
+    priorityArray[2] = "GENERAL";
 }
 
-int print(Node* head){
+void merge(struct passenger array[], int left, int mid, int right) {
+    int leftArrSize = mid - left + 1;
+    int rightArrSize = right - mid;
 
-    Node* temp = head;
-    int count = 0;
-    while(temp != NULL){
-    // printf("error in print");
-        printf("%d - %s (%d)\n",temp->id,temp->name,temp->pr);
-        count++;
-        temp = temp->next;
+    struct passenger leftArr[leftArrSize], rightArr[rightArrSize];
+    int leftIndex = 0, rightIndex = 0, arrayIndex = left;
+
+    while(leftIndex < leftArrSize) {
+        leftArr[leftIndex++] = array[arrayIndex++];
     }
-    printf("\n");
-    return count;
+
+    while(rightIndex < rightArrSize) {
+        rightArr[rightIndex++] = array[arrayIndex++];
+    }
+
+    leftIndex = 0, arrayIndex = left, rightIndex = 0;
+    while(leftIndex < leftArrSize && rightIndex < rightArrSize) {
+        if(leftArr[leftIndex].priority <= rightArr[rightIndex].priority) {
+            array[arrayIndex] = leftArr[leftIndex];
+            arrayIndex++;
+            leftIndex++;
+        } else {
+            array[arrayIndex] = rightArr[rightIndex];
+            arrayIndex++;
+            rightIndex++;
+        }
+    }
+
+    while(leftIndex < leftArrSize) {
+        array[arrayIndex] = leftArr[leftIndex];
+        arrayIndex++;
+        leftIndex++;
+    }
+
+    while(rightIndex < rightArrSize) {
+        array[arrayIndex] = rightArr[rightIndex];
+        arrayIndex++;
+        rightIndex++;
+    }
 }
 
+void mergeSort(struct passenger array[], int left, int right) {
+    if(left < right) {
+        int mid = left + (right - left) / 2;
 
-Node *push(Node *head, int id, Pr pr, char *name)
+        mergeSort(array, left, mid);
+        mergeSort(array, mid + 1, right);
+        merge(array, left, mid, right);
+    }
+}
+
+int main()
 {
+    int choice;
+    int noOfOperations;
+    printf("Enter no of operations: ");
+    scanf("%d", &noOfOperations);
 
-    if (head == NULL)
+    struct passenger array[noOfOperations];
+    struct passenger newPassenger;
+
+    initializeArray();
+    int front = 0;
+    int rear = 0;
+    while (noOfOperations--)
     {
-        return createNode(id, pr, name);
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            printf("Enter id: ");
+            scanf("%d", &newPassenger.id);
+            printf("Enter priority: ");
+            char priorityStr[20];
+            scanf("%s", priorityStr);
+
+            if (strcmp(priorityStr, "VIP") == 0)
+            {
+                newPassenger.priority = VIP;
+            }
+            else if (strcmp(priorityStr, "SENIOR_CITIZEN") == 0)
+            {
+                newPassenger.priority = SENIOR_CITIZEN;
+            }
+            else if (strcmp(priorityStr, "GENERAL") == 0)
+            {
+                newPassenger.priority = GENERAL;
+            }
+            else
+            {
+                printf("\nInvalid severity\n");
+            }
+
+            printf("Enter name: ");
+            newPassenger.name = (char *)malloc(100 * sizeof(char));
+            scanf("%s", newPassenger.name);
+            array[rear] = newPassenger; 
+            rear++;
+            mergeSort(array, front, rear - 1);
+            break;
+
+        case 2:
+            if(front < rear) {
+                printf("Serving Passenger: ID: %d, ", array[front].id);
+                printf("Name: %s, ", array[front].name);
+                printf("Type: %s\n", priorityArray[array[front].priority]);
+                free(array[front].name);
+                front++;
+            } else {
+                printf("Queue is empty\n");
+            }
+            break;
+
+        case 3: 
+            printf("Waiting passenger:\n");
+            for(int index = front; index < rear; index++) {
+                printf("ID: %d ", array[index].id);
+                printf("Name: %s\n", array[index].name);
+                printf("Type: %s ", priorityArray[array[index].priority]);
+            }
+            break;
+
+        case 4:
+            printf("Exiting...\n");
+            return 0;
+
+        default:
+            printf("Invalid choice\n");
+            break;
+        }
     }
 
-    Node *temp = head;
-    while (temp->next != NULL)
+    for (int index = front; index < rear; index++)
     {
-        temp = temp->next;
+        free(array[index].name);
     }
-    Node* newNode = createNode(id,pr,name);
-    temp->next = newNode;
-        // print(head);
-    return head;
-}
 
-Node* pop(Node* head){
-
-    if(head == NULL){
-        return NULL;
-    }
-    Node* temp = head;
-    head = head->next;
-    print(temp);
-    free(temp);
-    return head;
-}
-
-int main(){
-    Node* head = createNode(1,1,"Utkarsh");
-    // printf("hello world");
-    head = push(head,102,2,"Sumit");
-    head = push(head,103,3,"Jainam");
-    head = push(head,104,1,"Hari");
-    head = push(head,107,2,"Nothing");
-    print(head);
-    head = pop(head);
-    print(head);
-
-    scanf("%d, %[^\,], \%[^\n]")
-
-
-
-
+    return 0;
 }
