@@ -144,18 +144,9 @@ Node* mergeSort(Node* left,Node* right){
     }
 
     return dummy->next;
-    // if(left->g <= right->g)
-    // {
-    //     left->next = mergeSort(left->next,right);
-    //     return left;
-    // }
-
-//    right->next = mergeSort(left,right->next);
-//         return right;
 }
 
 Node* merge(Node* head){
-
     if(head == NULL || head->next == NULL){
         return head;
     }
